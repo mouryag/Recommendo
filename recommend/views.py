@@ -17,7 +17,7 @@ import random
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer,CountVectorizer
 from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
-from nltk.stem.snowball import SnowballStemmer
+#from nltk.stem.snowball import SnowballStemmer
 import time
 
 # Create your views here.
@@ -99,7 +99,7 @@ s = smd2.apply(lambda x: pd.Series(x['keywords']),axis=1).stack().reset_index(le
 s.name = 'keyword'
 s = s.value_counts()
 s = s[s > 1]
-stemmer = SnowballStemmer('english')
+#stemmer = SnowballStemmer('english')
 
 def filter_keywords(x):
     words = []
@@ -108,7 +108,7 @@ def filter_keywords(x):
             words.append(i)
     return words
 smd2['keywords'] = smd2['keywords'].apply(filter_keywords)
-smd2['keywords'] = smd2['keywords'].apply(lambda x: [stemmer.stem(i) for i in x])
+#smd2['keywords'] = smd2['keywords'].apply(lambda x: [stemmer.stem(i) for i in x])
 smd2['keywords'] = smd2['keywords'].apply(lambda x: [str.lower(i.replace(" ", "")) for i in x])
 
 smd2['soup'] = smd2['keywords'] + smd2['cast'] + smd2['director'] + smd2['genres']

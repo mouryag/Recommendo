@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import *
 from django.http import Http404
 from django.template import loader
@@ -359,12 +360,22 @@ def genres(request,genre):
     txt = genre + " Movies"
     no = False
     query = request.GET.get('q')
+    p = Paginator(mvs, 100)
+    page_number = request.GET.get('page')
+    try:
+        page_obj = p.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        page_obj = p.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        page_obj = p.page(p.num_pages)
 
     if query:
         movies = mvs.filter(Q(title__icontains=query)).distinct()
         return render(request, 'recommend/list.html', {'movies': movies,'no':True,'coll':coll,'genres':genres,'comps':comps,'dirs':d,'act':act,'act2':act2})
 
-    return render(request, 'recommend/list.html', {'movies': mvs,'txt':txt,'genres':genres,'no':no})
+    return render(request, 'recommend/list.html', {'page_obj': page_obj,'txt':txt,'genres':genres,'no':no})
 
 
 def voteavg(request,voteavg,yr):
@@ -375,11 +386,22 @@ def voteavg(request,voteavg,yr):
         movies = Movie4.objects.filter(vote_average__gte=voteavg).order_by('-year').order_by("-vote_average")
         query = request.GET.get('q')
 
+        p = Paginator(movies, 100)
+        page_number = request.GET.get('page')
+        try:
+            page_obj = p.get_page(page_number)  # returns the desired page object
+        except PageNotAnInteger:
+            # if page_number is not an integer then assign the first page
+            page_obj = p.page(1)
+        except EmptyPage:
+            # if page is empty then return last page
+            page_obj = p.page(p.num_pages)
+
         if query:
             movies = movies.filter(Q(title__icontains=query)).distinct()
-            return render(request, 'recommend/list.html', {'movies': movies,'no':True,'coll':coll,'genres':genres,'comps':comps,'dirs':d,'act':act,'act2':act2})
+            return render(request, 'recommend/list.html', {'movies':movies,'no':True,'coll':coll,'genres':genres,'comps':comps,'dirs':d,'act':act,'act2':act2})
 
-        return render(request, 'recommend/list.html', {'movies': movies,'txt':txt,'no':True,'genres':genres,'coll':coll,'comps':comps,'dirs':d,'act':act,'act2':act2})
+        return render(request, 'recommend/list.html', {'page_obj':page_obj,'txt':txt,'no':True,'genres':genres,'coll':coll,'comps':comps,'dirs':d,'act':act,'act2':act2})
     else:
         txt ="Movies with rating "+str(voteavg)+" and more in year "+str(yr)
         movies = Movie4.objects.filter(vote_average__gte=voteavg,year=yr).order_by('-year').order_by("-vote_average")
@@ -400,11 +422,22 @@ def index(request):
     movies = Movie4.objects.all().order_by("-popularity")
     query = request.GET.get('q')
 
+    p = Paginator(movies, 100)  # creating a paginator object
+    # getting the desired page number from url
+    page_number = request.GET.get('page')
+    try:
+        page_obj = p.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        page_obj = p.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        page_obj = p.page(p.num_pages)
     if query:
         movies = Movie4.objects.filter(Q(title__icontains=query)).distinct()
         return render(request, 'recommend/list.html', {'movies': movies,'no':True,'coll':coll,'genres':genres,'comps':comps,'dirs':d,'act':act,'act2':act2})
 
-    return render(request, 'recommend/list.html', {'movies': movies,'genres':genres,'no':True,'coll':coll,'genres':genres,'comps':comps,'dirs':d,'act':act,'act2':act2})
+    return render(request, 'recommend/list.html', {'page_obj': page_obj,'genres':genres,'no':True,'coll':coll,'genres':genres,'comps':comps,'dirs':d,'act':act,'act2':act2})
 
 
 

@@ -177,6 +177,36 @@
     {% endif %}
 </div>
 
+<div class="row" >
+    {% if page_obj %}
+    {% for movie in page_obj.object_list %}
+    <p>
+        &nbsp;
+    </p>
+    <div class="col-sm-2 col-md-2">
+        <div class="thumbnail" style="border-radius: 22px 22px 22px 22px;">
+            <center><h5 style="color:#F0E51C">{{movie.title}}</h5></center>
+            <a href="{% url 'detail' movie.id %}">
+                <img src="{{ movie.img_url}}" class="img-responsive" style="border-radius: 22px 22px 22px 22px;">
+            </a>
+            <center><h5 style="color:white">{{movie.year}}</h5></center>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+<center>
+    {%if page_obj.has_previous %} {# whether the previous page exists #}
+    <a href="?page={{page_obj.previous_page_number}}">previous</a> {# link to the prev page #}
+    {% endif %}
+    &nbsp;&nbsp;
+    <span>{{page_obj.number}}</span> {# the current page number #}
+    &nbsp;&nbsp;
+    {%if page_obj.has_next %} {# whether the next page exists #}
+    <a href="?page={{page_obj.next_page_number}}">next</a> {# link to the next page #}
+    {% endif %}
+</center>
+
 </div>
 
 <script type="text/javascript">

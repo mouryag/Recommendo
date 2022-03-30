@@ -1,0 +1,13 @@
+.idea
+recommend/algorithm/
+settings.json
+*.pyc
+# virtualenv generated files #
+##############################
+Scripts
+Lib
+Include
+
+# virtualenv folders #
+######################
+venv

@@ -1,0 +1,33 @@
+{% extends 'recommend/base.html'%}
+{% block body %}
+
+<h2>My List</h2>
+<hr>
+<br>
+<!-- Movie list -->
+<div class="row">
+    {% if movies %}
+    <div class="row" >
+        {% if movies %}
+        {% for movie in movies %}
+        <div>
+            <div class="thumbnail" style="border-radius: 22px 22px 22px 22px;">
+                <center><h5>{{movie.title}}</h5></center>
+                <a href="{% url 'detail' movie.id %}">
+                    <img src="{{ movie.img_url }}" class="img-responsive" style="border-radius: 22px 22px 22px 22px;">
+                </a>
+                <center><h5>{{movie.tagline}}</h5></center>
+
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    {% else %}
+        <div class="alert alert-danger">
+            <strong>Sorry!</strong> No movies in your list.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

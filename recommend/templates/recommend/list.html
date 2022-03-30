@@ -1,0 +1,257 @@
+{% extends 'recommend/base.html'%}
+{% block body %}
+
+{% if not request.user.is_authenticated %}
+<br>
+{% else %}
+<center style="color:black"><h2>Welcome {{user.username}}!!</h2></center>
+{% endif %}
+<br><br>
+
+<div class="container" >
+    <div class="col-xs-6 col-xs-offset-3">
+        <form class="form-horizontal" role="search" method="get" action=''>
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="text" class="form-control input-lg " name="q" value="{{ request.GET.q }}" placeholder= "Search Movies "/>
+                    <span class='input-group-btn'>
+                        <button class='button1' type='submit' style="background-color:#6e2f49">Search</button>
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<p style="text-align:left;">
+    <span style="float:right;">
+        <a href="{% url 'recommend' %}" class="btn"><button style="color:#fff;background-color:#4b93b8;padding:10px">Recommend Movies</button></a>
+</span>
+</p>
+<hr>
+<br>
+<center>
+<div class="dropdown">
+    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+        Genres
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        {% for genre in genres %}
+        <button type="button" class="btn btn-default"><a class="dropdown-item" href="{% url 'genres' genre %}">{{ genre }}</a></button>
+        {% endfor %}
+    </ul>
+</div>
+<hr>
+{% if no %}
+<h4 style="color:black;">Genre, Rating and Year :</h4>
+
+<select id="gen">
+    <option value="0" selected="selected">All Genres</option>
+    <option value="1">Drama</option>
+    <option value="2" >Comedy</option>
+    <option value="3" >Thriller</option>
+    <option value="4" >Romance</option>
+    <option value="5" >Action</option>
+    <option value="6" >Crime</option>
+    <option value="7" >Animation</option>
+    <option value="8" >Fantasy</option>
+    <option value="9">Family</option>
+    <option value="10">Horror</option>
+    <option value="11">Adventure</option>
+
+</select>
+&nbsp;&nbsp;
+<select id="ddlViewBy" onchange="show()">
+    <option value="1" selected="selected">Rating</option>
+    <option value="2">6</option>
+    <option value="3" >6.5</option>
+    <option value="4" >7</option>
+    <option value="5" >7.5</option>
+    <option value="6" >8</option>
+
+</select>
+
+
+<br><br>
+<div class="dropdown">
+    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+        In year
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" id="list">
+    </ul>
+</div>
+<!-- Movie list -->
+<hr>
+    <button data-toggle="collapse" class="btn btn-primary" data-target="#demo1">Filter by </button>
+    <div id="demo1" class="collapse">
+        <br><br>
+        {% if act2 %}
+        <div class="dropdown">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                Actress
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                {% for actress in act2 %}
+                <button type="button" class="btn btn-default"><a class="dropdown-item" href="{% url 'actor2' actress%}">{{ actress }}</a></button>
+                {% endfor %}
+            </ul>
+        </div>
+        <hr>
+        {% endif %}
+        {% if act %}
+        <div class="dropdown">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                Actor
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                {% for actor in act %}
+                <button type="button" class="btn btn-default"><a class="dropdown-item" href="{% url 'actor' actor%}">{{ actor }}</a></button>
+                {% endfor %}
+            </ul>
+        </div>
+        <hr>
+        {% endif %}
+        {% if dirs %}
+        <div class="dropdown">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                Director
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                {% for dir in dirs %}
+                <button type="button" class="btn btn-default"><a class="dropdown-item" href="{% url 'director' dir%}">{{ dir }}</a></button>
+                {% endfor %}
+            </ul>
+        </div>
+        <hr>
+        {% endif %}
+{% if coll %}
+<div class="dropdown">
+    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+        Franchise
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        {% for collection in coll %}
+        <button type="button" class="btn btn-default"><a class="dropdown-item" href="{% url 'franchise' collection %}">{{ collection }}</a></button>
+        {% endfor %}
+    </ul>
+</div>
+<hr>
+{% endif %}
+    {% if comps %}
+    <div class="dropdown">
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+            Production House
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            {% for ph in comps %}
+            <button type="button" class="btn btn-default"><a class="dropdown-item" href="{% url 'prod' ph %}">{{ ph }}</a></button>
+            {% endfor %}
+        </ul>
+    </div>
+    <hr>
+    {% endif %}
+    </div>
+{% endif %}
+</center>
+
+{% if txt %}
+<h2 style="color:balck;">Search {{ txt }}</h2>
+{% endif %}
+<div class="row" >
+    {% if movies %}
+    {% for movie in movies %}
+    <p>
+        &nbsp;
+    </p>
+    <div class="col-sm-2 col-md-2">
+        <div class="thumbnail" style="border-radius: 22px 22px 22px 22px;">
+            <center><h5 style="color:#F0E51C">{{movie.title}}</h5></center>
+            <a href="{% url 'detail' movie.id %}">
+                <img src="{{ movie.img_url}}" class="img-responsive" style="border-radius: 22px 22px 22px 22px;">
+            </a>
+            <center><h5 style="color:white">{{movie.year}}</h5></center>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+</div>
+
+<script type="text/javascript">
+            var yr = 2017;
+            var e = document.getElementById("ddlViewBy");
+            var gen = document.getElementById("gen")
+            function show(){
+              var e = document.getElementById("ddlViewBy");
+              var strUser = e.options[e.selectedIndex].text;
+              return strUser;
+            }
+            function removeAllChildNodes(parent)
+            {
+                    while (parent.firstChild) {
+                        parent.removeChild(parent.firstChild);
+                    }
+             }
+            function addText() {
+                var list = document.getElementById("list");
+                removeAllChildNodes(list);
+                var num =1;
+                var e = document.getElementById("ddlViewBy");
+                var rat = e.options[e.selectedIndex].text;
+                var gen = document.getElementById("gen")
+                var genre = gen.options[gen.selectedIndex].text;
+                var a1 = document.createElement("A");
+                a1.innerHTML = " All Years ";
+                if(genre!="All Genres"){
+                a1.href='/gvy/'.concat(genre).concat("/").concat(rat).concat("/").concat(num.toString()).concat("/");
+                }
+                else{
+                a1.href='/avg/'.concat(rat).concat("/").concat(num.toString()).concat("/");
+                }
+                list.appendChild(a1);
+                for (var i = 1990; i <= yr; i++) {
+                    var text = i;
+                    var a = document.createElement("A");
+                    a.innerHTML = text +" ";
+                    if(rat == "All Ratings")
+                    {
+                    st ="/gy/";
+                    st2 =st.concat(genre);
+                    st3 = st2.concat("/");
+                    st4 = st3.concat(i.toString());
+                    st5 = st4.concat("/");
+                    a.href = st5;
+                    list.appendChild(a);
+                    }
+                    if(genre == "All Genres")
+                    {
+                    st = "/avg/";
+                    st2 = st.concat(rat);
+                    st3 = st2.concat("/");
+                    st4 = st3.concat(i.toString());
+                    st5 = st4.concat("/");
+                    a.href = st5;
+                    list.appendChild(a);
+                    }
+                    else
+                    {
+                    st = "/gvy/";
+                    st2 = st.concat(genre);
+                    st3= st2.concat("/");
+                    st4 = st3.concat(rat);
+                    st5 = st4.concat("/");
+                    st6 = st5.concat(i.toString());
+                    st7 = st6.concat("/");
+                    a.href = st7;
+                    list.appendChild(a);
+                    }
+
+                }
+            };
+           e.onchange = function(){ addText() }
+        </script>
+<!--;-->
+
+{% endblock %}

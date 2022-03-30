@@ -1,0 +1,158 @@
+{% extends 'recommend/base.html'%}
+{% block title %}{{movies.title}}{% endblock %}
+
+{% block body %}
+{% if messages %}
+<center>
+    <ul class="messages">
+        {% for message in messages %}
+            <div class="alert">
+              <strong>Success!</strong> {{message}}
+            </div>
+        {% endfor %}
+    </ul>
+</center>
+{% endif %}
+
+<center>
+<button data-toggle="collapse" class="btn btn-primary" data-target="#demo">Overview</button>
+
+<div id="demo" class="collapse">
+    <small style="color:black">{{movies.overview}}</small>
+</div>
+</center>
+
+<div class="container-fluid col-sm-offset-1">
+
+    <div class="row">
+        <!-- Left Movie Info -->
+        <div class="col-sm-2 col-md-3">
+<!--            <div class="panel panel-default">-->
+<!--                <div class="panel-body" style="border-radius: 22px 22px 22px 22px;">-->
+                    <a href="#">
+                        <img src="{{ movies.img_url}}" class="img-responsive" style="border-radius: 22px 22px 22px 22px;">
+                    </a>
+                    <h2></h2>
+
+
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+        <!-- Right Movie Info -->
+        <div class="col-sm-offset-1 col-sm-4 col-md-4">
+            <h1 style="color:black">{{movies.title}}  - ({{ movies.vote_average }})</h1>
+            <h3 style="color:black"><small style="color:black;font-size:18px;font-style:italic">{{movies.tagline}}</small></h3>
+            {% for genre in gens %}
+            <button type="button" class="btn btn-default"> {{ genre }} </button>
+            {% endfor %}
+            <br><br>
+            <h4 style="color:black">Runtime - {{ movies.runtime }} mins</h4>
+            <hr>
+
+
+            <div class="col-sm-offset-0 col-sm-10">
+                <form class="form-horizontal" role="search" method="post" action="{% url 'detail' movies.id %}" onsubmit="return validateForm()"  name="ratingForm">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="row">
+                                <div class="col-lg-14">
+                                    <div class="star-rating">
+                                        <span>Rate Movie</span>
+                                        <br>
+                                        <span class="fa fa-star-o" data-rating="1"></span>
+                                        <span class="fa fa-star-o" data-rating="2"></span>
+                                        <span class="fa fa-star-o" data-rating="3"></span>
+                                        <span class="fa fa-star-o" data-rating="4"></span>
+                                        <span class="fa fa-star-o" data-rating="5"></span>
+                                        <span class="fa fa-star-o" data-rating="6"></span>
+                                        <span class="fa fa-star-o" data-rating="7"></span>
+                                        <span class="fa fa-star-o" data-rating="8"></span>
+                                        <span class="fa fa-star-o" data-rating="9"></span>
+                                        <span class="fa fa-star-o" data-rating="10"></span>
+                                        
+                                        {% if rate_flag %}
+                                            <input type="hidden" name="rating" class="rating-value" value="{{movie_rating}}" >
+                                        {% else %}
+                                            <input type="hidden" name="rating" class="rating-value" value="0">
+                                        {% endif %}
+                                        {% csrf_token %}
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="submit" class="button" value="Submit">
+                        </div>
+                    </div>
+                </form>
+
+                <form class="form-horizontal" role="search" method="post" action="{% url 'detail' movies.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="row">
+                                <div class="col-lg-14">
+                                    <div class="star-rating">
+                                        <span>Add to my list  </span>
+                                        {% if update %}
+                                        <input type="checkbox" name="watch" checked>
+                                        <input type="submit" class="button" value="Remove" name="watch">
+                                        {% else %}
+                                        <input type="checkbox" name="watch" checked>
+                                        <input type="submit" class="button" value="Add">
+
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+<!--                            <input type="submit" class="button" value="Add">-->
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row" >
+    {% if recmvs2 %}
+    <h2>Recommended Movies 1</h2>
+    {% for movie in recmvs2 %}
+    <p>
+        &nbsp;
+    </p>
+    <div class="col-sm-2 col-md-2">
+        <div class="thumbnail" style="border-radius: 22px 22px 22px 22px;">
+            <center><h5 style="color:#F0E51C">{{movie.title}}</h5></center>
+            <a href="{% url 'detail' movie.id %}">
+                <img src="{{ movie.img_url}}" class="img-responsive" style="border-radius: 22px 22px 22px 22px;">
+            </a>
+            <center><h5 style="color:white">{{movie.year}}</h5></center>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<div class="row" >
+    {% if recmvs %}
+    <h2>Recommended Movies 2</h2>
+    {% for movie in recmvs %}
+    <p>
+        &nbsp;
+    </p>
+    <div class="col-sm-2 col-md-2">
+        <div class="thumbnail" style="border-radius: 22px 22px 22px 22px;">
+            <center><h5 style="color:#F0E51C">{{movie.title}}</h5></center>
+            <a href="{% url 'detail' movie.id %}">
+                <img src="{{ movie.img_url}}" class="img-responsive" style="border-radius: 22px 22px 22px 22px;">
+            </a>
+            <center><h5 style="color:white">{{movie.year}}</h5></center>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+
+{% endblock %}
